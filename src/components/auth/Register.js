@@ -3,6 +3,7 @@ import "antd/dist/antd.css";
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
 import "./login.css";
+import axios from "axios";
 import Image from "../../image/image.jpg";
 import { registerUser } from "../../actions/authActions";
 import Avatar from "@material-ui/core/Avatar";
@@ -65,13 +66,21 @@ function Register() {
 
     setIsLoading(true);
     const userData = {
-      name: fields.name,
+      fullName: fields.name,
       email: fields.email,
       password: fields.password
     };
-    console.log(userData);
-
-    registerUser(userData);
+    axios({
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      url: `https://warm-tundra-71392.herokuapp.com/user/signup`,
+      data: JSON.stringify(userData)
+    }).then(json => {
+      console.log(json);
+    });
+    // registerUser(userData);
   }
   return (
     <Grid container component="main" className={classes.root}>

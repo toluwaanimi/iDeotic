@@ -4,6 +4,8 @@ import { connect } from "react-redux";
 import PropTypes from "prop-types";
 import "./login.css";
 import axios from "axios";
+import { useHistory } from "react-router-dom";
+
 import { loginUser } from "../../actions/authActions";
 import "../../image/image.jpg";
 import Avatar from "@material-ui/core/Avatar";
@@ -55,7 +57,12 @@ const useStyles = makeStyles(theme => ({
 }));
 
 function Login() {
+  if (localStorage.getItem("jwtToken") !== null) {
+    history.push("/dashboard");
+  }
+
   const classes = useStyles();
+  const history = useHistory();
   const [isLoading, setIsLoading] = React.useState(false);
   const [fields, handleFieldChange] = useFormFields({
     email: "",
@@ -63,18 +70,30 @@ function Login() {
   });
   function submit(e) {
     e.preventDefault();
-    axios.get(`https://dog.ceo/api/breeds/list/all`).then(res => {
-      const persons = res.data;
-      console.log(persons.message);
-    });
     setIsLoading(true);
     const userData = {
       email: fields.email,
       password: fields.password
     };
-    console.log(userData);
-
-    loginUser(userData);
+    axios({
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      url: `https://warm-tundra-71392.herokuapp.com/user/login`,
+      data: JSON.stringify(userData)
+    }).then(json => {
+      if (json.data.status === true) {
+        console.log("Success");
+        const { token } = json.data;
+        localStorage.setItem("jwtToken", token);
+        history.push("/dashboard");
+      } else {
+        console.log("Wrong");
+      }
+      console.log(json.data);
+    });
+    // loginUser(userData);
   }
   return (
     <Grid container component="main" className={classes.root}>

@@ -5,11 +5,21 @@ import jwt_decode from "jwt-decode";
 import { GET_ERRORS, SET_CURRENT_USER } from "./types";
 
 export const registerUser = (userData, history) => dispatch => {
-  axios.post(`https://henadad.herokuapp.com/organizer/signup`, userData)
-    .then(res => {history.push("/")
-    console.log(res);
-    }
-         ).catch(err => {
+  console.log(userData);
+  axios({
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    url: `https://warm-tundra-71392.herokuapp.com/user/signup`,
+    data: JSON.stringify(userData)
+  })
+    .then(json => {
+      console.log(json);
+      history.push("/login");
+    })
+    .catch(err => {
+      console.log(err);
       dispatch({
         type: GET_ERRORS,
         payload: err.response.data
@@ -19,14 +29,18 @@ export const registerUser = (userData, history) => dispatch => {
 
 // Login - Get User Token
 export const loginUser = userData => dispatch => {
-  console.log("Got here");
-  axios
-    .post("https://henadad.herokuapp.com/organizer/login", userData)
-    .then(res => {
-      // Save to localStorage
-      const { token } = res.data;
-      console.log(res)
-            // Set token to ls
+  axios({
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    url: `https://warm-tundra-71392.herokuapp.com/user/login`,
+    data: JSON.stringify(userData)
+  })
+    .then(json => {
+      console.log(json);
+      const { token } = json.data;
+      // Set token to ls
       localStorage.setItem("jwtToken", token);
       // Set token to Auth header
       setAuthToken(token);
@@ -34,13 +48,16 @@ export const loginUser = userData => dispatch => {
       const decoded = jwt_decode(token);
       // Set current user
       dispatch(setCurrentUser(decoded));
+
+      console.log(json);
     })
-    .catch(err =>
+    .catch(err => {
+      console.log(err);
       dispatch({
         type: GET_ERRORS,
         payload: err.response.data
-      })
-    );
+      });
+    });
 };
 
 export const setCurrentUser = decoded => {
