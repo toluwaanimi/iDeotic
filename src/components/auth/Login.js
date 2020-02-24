@@ -5,7 +5,7 @@ import PropTypes from "prop-types";
 import "./login.css";
 import axios from "axios";
 import { useHistory } from "react-router-dom";
-
+import { Link } from "react-router-dom";
 import { loginUser } from "../../actions/authActions";
 import "../../image/image.jpg";
 import Avatar from "@material-ui/core/Avatar";
@@ -14,7 +14,7 @@ import CssBaseline from "@material-ui/core/CssBaseline";
 import TextField from "@material-ui/core/TextField";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Checkbox from "@material-ui/core/Checkbox";
-import Link from "@material-ui/core/Link";
+// import Link from "@material-ui/core/Link";
 import Paper from "@material-ui/core/Paper";
 import Box from "@material-ui/core/Box";
 import Grid from "@material-ui/core/Grid";
@@ -57,12 +57,13 @@ const useStyles = makeStyles(theme => ({
 }));
 
 function Login() {
+  const classes = useStyles();
+  const history = useHistory();
+
   if (localStorage.getItem("jwtToken") !== null) {
     history.push("/dashboard");
   }
 
-  const classes = useStyles();
-  const history = useHistory();
   const [isLoading, setIsLoading] = React.useState(false);
   const [fields, handleFieldChange] = useFormFields({
     email: "",
@@ -89,6 +90,7 @@ function Login() {
         localStorage.setItem("jwtToken", token);
         history.push("/dashboard");
       } else {
+        alert("Incorrect Credentials");
         console.log("Wrong");
       }
       console.log(json.data);
@@ -148,13 +150,9 @@ function Login() {
               Sign In
             </Button>
             <Grid container>
-              <Grid item xs>
-                {/* <Link href="#" variant="body2">
-                  Forgot password?
-                </Link> */}
-              </Grid>
+              <Grid item xs />
               <Grid item>
-                <Link href="/register" variant="body2">
+                <Link to="/register" variant="body2">
                   {"Don't have an account? Sign Up"}
                 </Link>
               </Grid>

@@ -4,7 +4,7 @@ import { connect } from "react-redux";
 import PropTypes from "prop-types";
 import "./login.css";
 import axios from "axios";
-import Image from "../../image/image.jpg";
+import { useHistory } from "react-router-dom";
 import { registerUser } from "../../actions/authActions";
 import Avatar from "@material-ui/core/Avatar";
 import Button from "@material-ui/core/Button";
@@ -12,7 +12,9 @@ import CssBaseline from "@material-ui/core/CssBaseline";
 import TextField from "@material-ui/core/TextField";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Checkbox from "@material-ui/core/Checkbox";
-import Link from "@material-ui/core/Link";
+import { Link } from "react-router-dom";
+
+// import Link from "@material-ui/core/Link";
 import Paper from "@material-ui/core/Paper";
 import Box from "@material-ui/core/Box";
 import Grid from "@material-ui/core/Grid";
@@ -55,6 +57,7 @@ const useStyles = makeStyles(theme => ({
 }));
 function Register() {
   const classes = useStyles();
+  const history = useHistory();
   const [isLoading, setIsLoading] = React.useState(false);
   const [fields, handleFieldChange] = useFormFields({
     name: "",
@@ -79,6 +82,11 @@ function Register() {
       data: JSON.stringify(userData)
     }).then(json => {
       console.log(json);
+      if (json.data.status === true) {
+        history.push("/dashboard");
+      } else {
+        alert("Registration not successful");
+      }
     });
     // registerUser(userData);
   }
@@ -154,7 +162,7 @@ function Register() {
                 </Link> */}
               </Grid>
               <Grid item>
-                <Link href="/" variant="body2">
+                <Link to="/" variant="body2">
                   {"Already registered? Sign In"}
                 </Link>
               </Grid>
